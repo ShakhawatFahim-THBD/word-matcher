@@ -1,0 +1,140 @@
+this is more of abc than pqr
+up vote 24 down vote favorite
+6
+
+
+    Possible Duplicate:
+    How to create a Java String from the contents of a file
+    Whole text file to a String in Java
+
+I am trying to read the contents of a file using FileReader . But i want to read the file without reading a line by line . Is it possible to read the whole file without loop. I am using the following code
+
+ try
+ {
+     File ff=new File("abc.txt");
+     FileReader fr=new FileReader(ff);
+
+     String s;
+     while(br.read()!=-1)
+     {
+          s=br.readLine();
+     }
+ }
+
+ catch(Exception ex)
+ {
+     ex.printStackTrace();
+ }
+
+java file io
+shareedit
+
+edited Jan 5 '13 at 7:31
+JJPA
+5,09831436
+
+asked Jan 5 '13 at 7:26
+Adesh singh
+37031124
+marked as duplicate by Brian Roach, nes1983, jlordo, kamaci, LittleBobbyTables Jan 5 '13 at 12:44
+
+This question has been asked before and already has an answer. If those answers do not fully address your question, please ask a new question.
+
+add a comment
+4 Answers
+active oldest votes
+up vote 54 down vote accepted
+
+
+If the file is small, you can read the whole data once:
+
+File file = new File("a.txt");
+FileInputStream fis = new FileInputStream(file);
+byte[] data = new byte[(int) file.length()];
+fis.read(data);
+fis.close();
+
+String str = new String(data, "UTF-8");
+
+shareedit
+
+edited Nov 24 '14 at 17:12
+Paul Vargas
+16.9k42956
+
+answered Jan 5 '13 at 7:40
+imxylz
+4,4301920
+
+
+
+Does not work for InputStream's s.a. Android assets (no length) –  akauppi Jun 13 '14 at 11:04
+add a comment
+up vote 56 down vote
+
+
+Java 7 one line solution
+
+List<String> lines = Files.readAllLines(Paths.get("file"), StandardCharsets.UTF_8);
+
+or
+
+ String text = new String(Files.readAllBytes(Paths.get("file")), StandardCharsets.UTF_8);
+
+shareedit
+
+edited Feb 11 '14 at 16:42
+Paul Vargas
+16.9k42956
+
+answered Jan 5 '13 at 7:36
+Evgeniy Dorofeev
+65.8k458115
+
+
+
+Can't find that Files in Android. –  akauppi Jun 13 '14 at 10:51
+1
+
+Android uses Java 6 ... The solution above uses API of Java 7 ... –  sockeqwe Jun 13 '14 at 22:42
+1
+
+Not all Java answers have to be suited to Android, @akauppi! Just look for a solution that Android supports from another answer! –  Isaac Woods Apr 4 at 13:54
+add a comment
+up vote 14 down vote
+
+
+You can try using Scanner if you are using JDK5 or higher.
+
+Scanner scan = new Scanner(file);
+scan.useDelimiter("\\Z");
+String content = scan.next();
+
+Or you can also use Guava
+
+String data = Files.toString(new File("path.txt"), Charsets.UTF8);
+
+shareedit
+
+answered Jan 5 '13 at 7:30
+Jayamohan
+6,79111430
+
+2
+
+Note that the scanner should be closed after use. –  Barry NL Feb 13 at 11:27
+
+
+String data = Files.toString(new File("path.txt"), Charsets.UTF_8);. Just a small typo. :-) –  pisaruk Jun 12 at 18:33
+add a comment
+up vote 8 down vote
+
+
+If you are using Java 5/6, you can use Apache Commons IO for read file to string. The class org.apache.commons.io.FileUtils contais several method for read files.
+
+e.g. using the method FileUtils#readFileToString:
+
+File file = new File("abc.txt");
+String content = FileUtils.readFileToString(file);
+
+shareedit
